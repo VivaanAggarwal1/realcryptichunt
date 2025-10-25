@@ -1,75 +1,128 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cryptic Hunt</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <div id="app">
-    <header class="bar">
-      <div class="logo">CRYPTIC HUNT</div>
-      <nav>
-        <button id="btn-login" class="ghost">Login</button>
-        <button id="btn-logout" class="ghost hidden">Logout</button>
-      </nav>
-    </header>
+/* ---- Theme ---- */
+:root{
+  --bg:#0b0f17;
+  --bg-2:#0c111c;
+  --surface:#111827;
+  --surface-2:#0f172a;
+  --text:#e6eaf2;
+  --muted:#a3b1c6;
+  --accent:#7aa2f7;
+  --accent-2:#22d3ee;
+  --ok:#34c759;
+  --bad:#ff4d4d;
+  --border:#1f2937;
+  --ring: 0 0 0 2px rgba(122,162,247,.35), 0 10px 30px rgba(0,0,0,.35);
+}
 
-    <main>
-      <section id="auth" class="card">
-        <h2>Login / Register</h2>
-        <form id="auth-form">
-          <label>Username <input id="auth-username" minlength="3" maxlength="24" required /></label>
-          <label>Password <input id="auth-password" type="password" minlength="6" required /></label>
-          <div class="row">
-            <button type="submit">Login</button>
-            <button type="button" id="register-btn" class="secondary">Register</button>
-          </div>
-          <div id="auth-msg" class="msg"></div>
-        </form>
-      </section>
+/* ---- Base ---- */
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; color:var(--text); background:var(--bg);
+  font:15px/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+}
+a{color:var(--accent);text-decoration:none}
+button{cursor:pointer}
+.hidden{display:none}
+.muted{color:var(--muted)}
 
-      <section id="game" class="hidden">
-        <div class="grid">
-          <div class="col">
-            <div class="card">
-              <div class="row space">
-                <h2 id="greet">Welcome</h2>
-                <div class="pill" id="progress-pill">0 / 10</div>
-              </div>
-              <div id="levels" class="levels"></div>
-            </div>
+/* Animated background */
+#bg{
+  position:fixed; inset:0; z-index:-2;
+  background:
+    radial-gradient(800px 400px at 10% 10%, rgba(34,211,238,.08), transparent 60%),
+    radial-gradient(700px 500px at 90% 20%, rgba(122,162,247,.10), transparent 60%),
+    linear-gradient(180deg, var(--bg), var(--bg-2));
+}
+#bg::after{
+  content:""; position:fixed; inset:-20%;
+  background:
+    conic-gradient(from 180deg at 50% 50%, rgba(122,162,247,.05), rgba(34,211,238,.05), rgba(122,162,247,.05));
+  filter: blur(80px) saturate(120%); opacity:.65; animation:spin 50s linear infinite;
+  z-index:-1;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-            <div class="card">
-              <h3>Leaderboard (this device)</h3>
-              <table id="board">
-                <thead><tr><th>#</th><th>User</th><th>Solved</th></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
-          </div>
+/* ---- Layout ---- */
+.topbar{
+  position:sticky; top:0; display:flex; align-items:center; justify-content:space-between;
+  padding:12px 16px; backdrop-filter:saturate(140%) blur(8px);
+  background:rgba(10,14,22,.55); border-bottom:1px solid var(--border); z-index:20;
+}
+.brand{display:flex; align-items:center; gap:10px; letter-spacing:.5px; font-weight:700}
+.brand .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 0 16px var(--accent)}
+.nav{display:flex; gap:8px; align-items:center}
+.ghost, .primary{
+  border:1px solid var(--border); background:transparent; color:var(--text);
+  padding:8px 12px; border-radius:12px; font-weight:600; transition:all .2s ease;
+}
+.ghost:hover{border-color:#2b3a55; transform:translateY(-1px)}
+.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#0a0f17; border:none}
+.primary:hover{filter:brightness(1.05); transform:translateY(-1px)}
+.xl{padding:12px 18px; border-radius:14px; font-size:16px}
 
-          <div class="col">
-            <div class="card" id="play-card">
-              <h3 id="level-title">Level</h3>
-              <p id="prompt"></p>
-              <form id="answer-form" class="answer-form">
-                <input id="answer" placeholder="Type answer" autocomplete="off" />
-                <button type="submit">Submit</button>
-              </form>
-              <div id="result" class="result"></div>
-            </div>
+#screens{max-width:1200px; margin:22px auto 80px; padding:0 16px}
+.screen{display:none}
+.screen.visible{display:block; animation:fade .25s ease}
+@keyframes fade{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
 
-            <div class="card">
-              <h3>Notes</h3>
-              <textarea id="notes" placeholder="Your working..." spellcheck="false"></textarea>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-  <script src="app.js" defer></script>
-</body>
-</html>
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,.02), transparent), var(--surface);
+  border:1px solid var(--border); border-radius:18px; padding:18px; box-shadow:var(--ring);
+}
+.fx-fade{animation:fade .3s ease}
+.fx-rise{animation:rise .35s ease}
+.fx-slide{animation:slide .35s ease}
+@keyframes rise{from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none}}
+@keyframes slide{from{opacity:0; transform:translateX(-12px)} to{opacity:1; transform:none}}
+
+/* Welcome */
+.hero h1{font-size:40px; margin:4px 0 8px}
+.hero .cta{display:flex; gap:10px; margin:12px 0 16px}
+.features{list-style:none; padding:0; margin:0; display:grid; gap:8px}
+.features .tag{background:#0c1323; border:1px solid #1f2b44; padding:2px 8px; border-radius:999px; margin-right:8px; color:#a9c1ff}
+.grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:16px}
+.mini h3{margin:4px 0 6px}
+
+/* Auth */
+.auth{max-width:520px; margin:0 auto}
+.form{display:flex; flex-direction:column; gap:10px}
+label{display:flex; flex-direction:column; gap:6px}
+input, textarea{
+  background:#0b1222; color:var(--text); border:1px solid #1e293b; border-radius:12px; padding:10px 12px;
+}
+input:focus, textarea:focus{outline:none; border-color:#375cbc; box-shadow:0 0 0 4px rgba(122,162,247,.15)}
+.msg{min-height:20px}
+
+/* Game layout */
+.layout{display:grid; grid-template-columns:300px 1fr; gap:16px}
+.sidebar .userline{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px}
+.pill{background:#0b1222;border:1px solid #1e293b;padding:4px 10px;border-radius:999px;color:var(--muted)}
+.levels{display:grid; grid-template-columns:1fr; gap:8px; margin-top:8px; max-height:60vh; overflow:auto}
+.level{
+  padding:10px 12px; border-radius:12px; border:1px solid #1f2937; background:#0b1222; color:var(--muted);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.level.unlocked{color:var(--text); border-color:#273449}
+.level.solved{background:#0f1a12; border-color:#224c2a; color:var(--ok)}
+.level .go{opacity:.75; font-size:12px}
+.level:hover{transform:translateY(-1px); border-color:#2b3a55}
+
+.stage{display:grid; gap:16px}
+.stage-head{display:flex; align-items:center; justify-content:space-between}
+.prompt{font-size:16px; margin:6px 0 12px}
+.answer-form{display:flex; gap:8px}
+.result{margin-top:8px; font-weight:700}
+.result.ok{color:var(--ok)} .result.bad{color:var(--bad)}
+
+/* Board */
+#board{width:100%; border-collapse:collapse; margin-top:6px}
+#board th,#board td{padding:10px; border-bottom:1px solid var(--border); text-align:left}
+#board tr:hover{background:#0c1323}
+
+/* Footer */
+.foot{max-width:1200px; margin:0 auto 24px; padding:0 16px; color:var(--muted)}
+
+/* Responsive */
+@media (max-width:1000px){ .layout{grid-template-columns:1fr} .grid-3{grid-template-columns:1fr} .hero h1{font-size:32px} }
