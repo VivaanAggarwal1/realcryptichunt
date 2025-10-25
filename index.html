@@ -7,69 +7,124 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div id="app">
-    <header class="bar">
-      <div class="logo">CRYPTIC HUNT</div>
-      <nav>
-        <button id="btn-login" class="ghost">Login</button>
-        <button id="btn-logout" class="ghost hidden">Logout</button>
-      </nav>
-    </header>
+  <div id="bg"></div>
 
-    <main>
-      <section id="auth" class="card">
-        <h2>Login / Register</h2>
-        <form id="auth-form">
-          <label>Username <input id="auth-username" minlength="3" maxlength="24" required /></label>
-          <label>Password <input id="auth-password" type="password" minlength="6" required /></label>
+  <header class="topbar">
+    <div class="brand">
+      <span class="dot"></span>
+      <span>CRYPTIC HUNT</span>
+    </div>
+    <nav class="nav">
+      <button data-nav="welcome" class="ghost">Home</button>
+      <button data-nav="game" class="ghost hidden" id="nav-game">Questions</button>
+      <button data-nav="board" class="ghost hidden" id="nav-board">Leaderboard</button>
+      <button id="btn-login" class="primary">Login</button>
+      <button id="btn-logout" class="ghost hidden">Logout</button>
+    </nav>
+  </header>
+
+  <main id="screens">
+    <!-- WELCOME -->
+    <section id="screen-welcome" class="screen visible">
+      <div class="hero card fx-fade">
+        <h1>Decode. Advance. Dominate.</h1>
+        <p class="muted">Ten levels. Each unlocks the next. Immediate verdicts. Race the clock.</p>
+        <div class="cta">
+          <button class="primary xl" id="hero-start">Get Started</button>
+          <button class="ghost xl" data-nav="board">View Leaderboard</button>
+        </div>
+        <ul class="features">
+          <li><span class="tag">Client-only</span> progress stored on this device</li>
+          <li><span class="tag">Instant Feedback</span> correct or wrong per try</li>
+          <li><span class="tag">Progressive Unlock</span> 1 → 10</li>
+        </ul>
+      </div>
+      <div class="grid-3">
+        <div class="mini card fx-rise">
+          <h3>Clean Puzzles</h3><p class="muted">No fluff. Just logic, patterns, ciphers.</p>
+        </div>
+        <div class="mini card fx-rise">
+          <h3>Dark UI</h3><p class="muted">Low-glare, high-contrast, readable everywhere.</p>
+        </div>
+        <div class="mini card fx-rise">
+          <h3>Fast</h3><p class="muted">No backend. Instant load and response.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- AUTH -->
+    <section id="screen-auth" class="screen">
+      <div class="auth card fx-fade">
+        <h2>Sign in</h2>
+        <p class="muted">Create an account locally or log in if you already did.</p>
+        <form id="auth-form" class="form">
+          <label>Username
+            <input id="auth-username" minlength="3" maxlength="24" required />
+          </label>
+          <label>Password
+            <input id="auth-password" type="password" minlength="6" required />
+          </label>
           <div class="row">
-            <button type="submit">Login</button>
-            <button type="button" id="register-btn" class="secondary">Register</button>
+            <button type="submit" class="primary">Login</button>
+            <button type="button" id="register-btn" class="ghost">Register</button>
           </div>
           <div id="auth-msg" class="msg"></div>
         </form>
-      </section>
+      </div>
+    </section>
 
-      <section id="game" class="hidden">
-        <div class="grid">
-          <div class="col">
-            <div class="card">
-              <div class="row space">
-                <h2 id="greet">Welcome</h2>
-                <div class="pill" id="progress-pill">0 / 10</div>
-              </div>
-              <div id="levels" class="levels"></div>
-            </div>
-
-            <div class="card">
-              <h3>Leaderboard (this device)</h3>
-              <table id="board">
-                <thead><tr><th>#</th><th>User</th><th>Solved</th></tr></thead>
-                <tbody></tbody>
-              </table>
-            </div>
+    <!-- GAME -->
+    <section id="screen-game" class="screen">
+      <div class="layout">
+        <aside class="sidebar card fx-slide">
+          <div class="userline">
+            <div id="greet">Welcome</div>
+            <div class="pill" id="progress-pill">0 / 10</div>
           </div>
+          <div class="levels" id="levels"></div>
+        </aside>
 
-          <div class="col">
-            <div class="card" id="play-card">
+        <section class="stage">
+          <div class="card fx-rise" id="play-card">
+            <div class="stage-head">
               <h3 id="level-title">Level</h3>
-              <p id="prompt"></p>
-              <form id="answer-form" class="answer-form">
-                <input id="answer" placeholder="Type answer" autocomplete="off" />
-                <button type="submit">Submit</button>
-              </form>
-              <div id="result" class="result"></div>
+              <div class="hint muted">You can revisit solved levels anytime.</div>
             </div>
-
-            <div class="card">
-              <h3>Notes</h3>
-              <textarea id="notes" placeholder="Your working..." spellcheck="false"></textarea>
-            </div>
+            <p id="prompt" class="prompt"></p>
+            <form id="answer-form" class="answer-form">
+              <input id="answer" placeholder="Type answer" autocomplete="off" />
+              <button type="submit" class="primary">Submit</button>
+            </form>
+            <div id="result" class="result"></div>
           </div>
+
+          <div class="card fx-rise">
+            <h3>Scratchpad</h3>
+            <textarea id="notes" placeholder="Your working…" spellcheck="false"></textarea>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- LEADERBOARD -->
+    <section id="screen-board" class="screen">
+      <div class="card fx-fade">
+        <div class="row space">
+          <h2>Leaderboard <span class="muted">(this device)</span></h2>
+          <button id="refresh-board" class="ghost">Refresh</button>
         </div>
-      </section>
-    </main>
-  </div>
+        <table id="board">
+          <thead><tr><th>#</th><th>User</th><th>Solved</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span class="muted">Client-only demo build</span>
+  </footer>
+
   <script src="app.js" defer></script>
 </body>
 </html>
